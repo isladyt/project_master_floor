@@ -1,0 +1,124 @@
+CREATE DATABASE Master_Floor
+-- 1. Таблица поставщиков
+CREATE TABLE suppliers (
+    supplier_id INT PRIMARY KEY AUTO_INCREMENT,
+    company_name VARCHAR(255) NOT NULL,
+    inn VARCHAR(12) UNIQUE NOT NULL,
+    contact_phone VARCHAR(20)
+);
+
+-- 2. Таблица материалов (сырья)
+CREATE TABLE materials (
+    material_id INT PRIMARY KEY AUTO_INCREMENT,
+    material_name VARCHAR(255) NOT NULL,
+    supplier_id INT NOT NULL,
+    cost_per_unit DECIMAL(15,2) NOT NULL,
+    unit_of_measure VARCHAR(50) NOT NULL,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id) ON DELETE CASCADE
+);
+
+-- 3. Склад материалов (остатки)
+CREATE TABLE warehouse_materials (
+    record_id INT PRIMARY KEY AUTO_INCREMENT,
+    material_id INT NOT NULL,
+    current_quantity INT NOT NULL DEFAULT 0,
+    min_quantity INT NOT NULL DEFAULT 10,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (material_id) REFERENCES materials(material_id) ON DELETE CASCADE
+);
+
+-- 4. Таблица продукции
+CREATE TABLE products (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(255) NOT NULL,
+    article_number VARCHAR(100) UNIQUE NOT NULL,
+    min_partner_price DECIMAL(15,2) NOT NULL,
+    cost_price DECIMAL(15,2) NOT NULL,
+    production_time_hours INT NOT NULL,
+    weight_net_kg DECIMAL(10,2),
+    weight_gross_kg DECIMAL(10,2)
+);
+
+-- 5. Таблица партнеров
+CREATE TABLE partners (
+    partner_id INT PRIMARY KEY AUTO_INCREMENT,
+    company_name VARCHAR(255) NOT NULL,
+    inn VARCHAR(12) UNIQUE NOT NULL,
+    director_name VARCHAR(255) NOT NULL,
+    contact_phone VARCHAR(20),
+    email VARCHAR(255),
+    current_rating INT DEFAULT 1
+);
+
+-- 6. История продаж партнеров (для расчета скидок)
+CREATE TABLE partner_sales_history (
+    sale_id INT PRIMARY KEY AUTO_INCREMENT,
+    partner_id INT NOT NULL,
+    sale_date DATE NOT NULL,
+    total_amount DECIMAL(15,2) NOT NULL,
+    products_sold_count INT NOT NULL,
+    FOREIGN KEY (partner_id) REFERENCES partners(partner_id) ON DELETE CASCADE
+);
+
+-- 7. Таблица сотрудников
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
+    full_name VARCHAR(255) NOT NULL,
+    passport_data VARCHAR(255) NOT NULL,
+    birth_date DATE NOT NULL,
+    bank_account_number VARCHAR(100)
+);
+
+-- 8. Таблица заявок от партнеров
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    partner_id INT NOT NULL,
+    manager_id INT NOT NULL,
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('created', 'waiting_payment', 'in_production', 'ready_for_shipment', 'completed', 'canceled') DEFAULT 'created',
+    prepayment_amount DECIMAL(15,2) DEFAULT 0,
+    total_amount DECIMAL(15,2) NOT NULL,
+    FOREIGN KEY (partner_id) REFERENCES partners(partner_id) ON DELETE CASCADE,
+    FOREIGN KEY (manager_id) REFERENCES employees(employee_id) ON DELETE CASCADE
+);
+
+-- 9. Позиции заявки (что заказано)
+CREATE TABLE order_items (
+    order_item_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    agreed_price DECIMAL(15,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- 10. Склад готовой продукции
+CREATE TABLE warehouse_products (
+    record_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    current_quantity INT NOT NULL DEFAULT 0,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- 11. Производственные задания
+CREATE TABLE production_orders (
+    production_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    status ENUM('planned', 'in_progress', 'completed', 'on_hold') DEFAULT 'planned',
+    workshop_number INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+);
+
+-- 12. Журнал доступа сотрудников
+CREATE TABLE access_log (
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT NOT NULL,
+    access_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    door_id INT NOT NULL,
+    access_type ENUM('entry', 'exit') NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE
+);
