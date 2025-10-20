@@ -1,5 +1,5 @@
 # db/models.py
-
+from .database_connector import get_db_connector
 def get_user_by_login(login, password):
     """Проверяет учетные данные и возвращает данные пользователя (ID, роль) или None."""
     pass
@@ -8,9 +8,39 @@ def register_new_user(user_data):
     """Добавляет нового пользователя в БД."""
     pass
 
+
 def get_all_products(sort_by=None, filter_by=None):
-    """Возвращает список товаров, с опциональной сортировкой и фильтрацией."""
-    pass
+    """
+    Возвращает список товаров, с опциональной сортировкой и фильтрацией.
+    Для Окна Партнера вызывается без параметров.
+    """
+    db_connector = get_db_connector()
+
+    # 1. SQL-запрос для получения товаров
+    # Запрос должен соответствовать заголовкам столбцов в UI: ID, Название, Тип, Цена
+    query = """
+    SELECT 
+        p.product_id AS id, 
+        p.product_name AS name, 
+        pt.type_name AS product_type, 
+        p.min_partner_price AS price
+    FROM 
+        products p
+    JOIN 
+        product_types pt ON p.product_type_id = pt.type_id
+    """
+
+    # 2. Выполнение запроса
+    # Мы полагаемся на db_connector.execute_query, который уже содержит
+    # логику проверки соединения (connection.open для PyMySQL) и обработки ошибок.
+    products = db_connector.execute_query(query, fetch=True)
+
+    if products is None or products is False:
+        # Если была ошибка выполнения или соединение было потеряно
+        print("Ошибка при получении данных о товарах или нет соединения с БД.")
+        return []
+
+    return products
 
 def get_product_by_id(product_id):
     """Возвращает данные одного товара по его ID."""
