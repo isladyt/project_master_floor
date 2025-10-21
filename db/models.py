@@ -8,6 +8,12 @@ def register_new_user(user_data):
     """Добавляет нового пользователя в БД."""
     pass
 
+def update_product(product_id, name, product_type, price):
+    """
+    Обновляет данные товара в базе данных
+    """
+    pass
+
 
 def get_all_products(sort_by=None, filter_by=None):
     """

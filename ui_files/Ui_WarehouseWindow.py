@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'ui_files/Ui_PartnerWindow.ui'
+# Form implementation generated from reading ui file './ui_files/Ui_WarehouseWindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.9.1
 #
@@ -12,17 +12,23 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(862, 614)
+        MainWindow.resize(809, 347)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.products_table = QtWidgets.QTableWidget(parent=self.centralwidget)
-        self.products_table.setGeometry(QtCore.QRect(10, 10, 831, 561))
-        self.products_table.setObjectName("products_table")
-        self.products_table.setColumnCount(0)
-        self.products_table.setRowCount(0)
+        self.tableWidget = QtWidgets.QTableWidget(parent=self.centralwidget)
+        self.tableWidget.setGeometry(QtCore.QRect(0, 0, 621, 301))
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
+        self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(640, 60, 151, 41))
+        self.pushButton.setObjectName("pushButton")
+        self.comboBox = QtWidgets.QComboBox(parent=self.centralwidget)
+        self.comboBox.setGeometry(QtCore.QRect(640, 10, 151, 31))
+        self.comboBox.setObjectName("comboBox")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 862, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 809, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
@@ -35,4 +41,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.pushButton.setText(_translate("MainWindow", "Отредактировать товар"))
+
 
