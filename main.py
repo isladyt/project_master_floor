@@ -2,7 +2,7 @@
 
 import sys
 from PyQt6.QtWidgets import QApplication
-from windows import RegistrationWindow  # Импортируем класс окна из пакета 'windows'
+from windows.registration_window import RegistrationWindow
 from config import APP_NAME
 
 
@@ -11,11 +11,9 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName(APP_NAME)
 
-    # 2. Создаем и показываем первое окно
-    # Это будет либо RegistrationWindow, либо сразу главное меню,
-
-    main_window = RegistrationWindow()
-    main_window.show()
+    # 2. Создаем и показываем окно регистрации/входа
+    auth_window = RegistrationWindow()
+    auth_window.show()
 
     # 3. Запускаем основной цикл обработки событий PyQt
     sys.exit(app.exec())
